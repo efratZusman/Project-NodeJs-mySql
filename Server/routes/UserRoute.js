@@ -16,6 +16,8 @@ router.put('/:id', userController.updateUserById);
 
 // Route to handle deleting a user by ID
 router.delete('/:id', userController.deleteUserById);
+
+
 module.exports = router;
 // UserController.js
 

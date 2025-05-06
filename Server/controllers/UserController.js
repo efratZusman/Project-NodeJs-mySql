@@ -1,4 +1,4 @@
-const UserService = require('../services/UserService');
+const UserService = require('../service/UserService');
 
 // Get all users
 exports.getAllUsers = async function getAllUsers(req, res) {
@@ -36,11 +36,11 @@ exports.createUser = async function createUser(req, res) {
 };
 
 // Update an existing user
-exports.updateUser = async function updateUser(req, res) {
+exports.updateUserById = async function updateUserById(req, res) {
     try {
         const userId = req.params.id;
         const userData = req.body;
-        const updatedUser = await UserService.updateUser(userId, userData);
+        const updatedUser = await UserService.updateUserById(userId, userData);
         if (!updatedUser) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -51,10 +51,10 @@ exports.updateUser = async function updateUser(req, res) {
 };
 
 // Delete a user
-exports.deleteUser = async function deleteUser(req, res) {
+exports.deleteUserById = async function deleteUserById(req, res) {
     try {
         const userId = req.params.id;
-        const deleted = await UserService.deleteUser(userId);
+        const deleted = await UserService.deleteUserById(userId);
         if (!deleted) {
             return res.status(404).json({ message: 'User not found' });
         }

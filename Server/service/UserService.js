@@ -53,7 +53,7 @@ exports.getAllUsers = async function getAllUsers() {
     }
 };
 
-exports.updateUser = async function updateUser(userId, userData) {
+exports.updateUserById = async function updateUserById(userId, userData) {
     const { username, email, passwordHash } = userData;
     const userQuery = 'UPDATE Users SET Username = ?, Email = ? WHERE UserID = ?';
     const passwordQuery = 'UPDATE Passwords SET PasswordHash = ? WHERE UserID = ?';
@@ -78,7 +78,7 @@ exports.updateUser = async function updateUser(userId, userData) {
     }
 };
 
-exports.deleteUser = async function deleteUser(userId) {
+exports.deleteUserById = async function deleteUserById(userId) {
     const query = 'DELETE FROM Users WHERE UserID = ?';
     try {
         const [result] = await db.execute(query, [userId]);
