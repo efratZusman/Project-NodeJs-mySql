@@ -1,11 +1,11 @@
-const mysql = require('mysql');
+const mysql = require('mysql2');
 
 // Create a connection to the database
 const connection = mysql.createConnection({
     host: 'localhost', // Replace with your database host
-    user: process.env.DB_USER, // Replace with your database username from environment variables
-    password: process.env.DB_PASSWORD, // Replace with your database password from environment variables
-    database: 'ProjectMysql'   // Replace with your database name
+    user: "root", // Replace with your database username from environment variables
+    password: 'Sari2005', // Replace with your database password from environment variables
+    Port: 3000,
 });
 
 // Connect to the database
@@ -18,4 +18,4 @@ connection.connect((err) => {
 });
 
 // Export the connection for use in other files
- module.exports = connection;
+ module.exports = connection.promise();

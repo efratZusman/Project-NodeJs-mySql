@@ -1,0 +1,90 @@
+
+const db = require('../../DB/connection');
+
+exports.createUser = async function createUser(userData) {
+    const { username, email, passwordHash } = userData;
+    const userQuery = 'INSERT INTO Users (Username, Email) VALUES (?, ?)';
+    const passwordQuery = 'INSERT INTO Passwords (UserID, PasswordHash) VALUES (?, ?)';
+    const userValues = [username, email];
+
+    let connection;
+    try {
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        const [userResult] = await connection.execute(userQuery, userValues);
+        const userId = userResult.insertId;
+
+        const passwordValues = [userId, passwordHash];
+        await connection.execute(passwordQuery, passwordValues);
+
+        await connection.commit();
+        connection.release();
+
+        return userId;
+    } catch (error) {
+        if (connection) await connection.rollback();
+        throw new Error('Error creating user: ' + error.message);
+    }
+};
+
+exports.getUserById = async function getUserById(userId) {
+    const query = `
+        SELECT Users.UserID, Users.Username, Users.Email, Users.CreatedAt, Passwords.PasswordHash 
+        FROM Users 
+        LEFT JOIN Passwords ON Users.UserID = Passwords.UserID 
+        WHERE Users.UserID = ?
+    `;
+    try {
+        const [rows] = await db.execute(query, [userId]);
+        return rows[0];
+    } catch (error) {
+        throw new Error('Error fetching user: ' + error.message);
+    }
+};
+
+exports.getAllUsers = async function getAllUsers() {
+    const query = 'SELECT * FROM Users';
+    try {
+        const [rows] = await db.execute(query);
+        return rows;
+    } catch (error) {
+        throw new Error('Error fetching users: ' + error.message);
+    }
+};
+
+exports.updateUser = async function updateUser(userId, userData) {
+    const { username, email, passwordHash } = userData;
+    const userQuery = 'UPDATE Users SET Username = ?, Email = ? WHERE UserID = ?';
+    const passwordQuery = 'UPDATE Passwords SET PasswordHash = ? WHERE UserID = ?';
+    const userValues = [username, email, userId];
+    const passwordValues = [passwordHash, userId];
+
+    let connection;
+    try {
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        await connection.execute(userQuery, userValues);
+        await connection.execute(passwordQuery, passwordValues);
+
+        await connection.commit();
+        connection.release();
+
+        return true;
+    } catch (error) {
+        if (connection) await connection.rollback();
+        throw new Error('Error updating user: ' + error.message);
+    }
+};
+
+exports.deleteUser = async function deleteUser(userId) {
+    const query = 'DELETE FROM Users WHERE UserID = ?';
+    try {
+        const [result] = await db.execute(query, [userId]);
+        return result.affectedRows > 0;
+    } catch (error) {
+        throw new Error('Error deleting user: ' + error.message);
+    }
+};
+
