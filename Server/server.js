@@ -1,5 +1,8 @@
 const express = require('express');
 const userRoute = require('./routes/UserRoute');
+const postRoute = require('./routes/PostRoute');
+const commentRoute = require('./routes/CommentRoute');
+const todoRoute = require('./routes/TodoRoute');
 // const mysql = require('mysql');
 // const bodyParser = require('body-parser');
 
@@ -9,6 +12,9 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use("/users", userRoute);
+app.use("/todos", todoRoute);
+app.use("/comments", commentRoute);
+app.use("/posts", postRoute);
 app.use("/", (req, res) =>{
     try {
      
