@@ -1,33 +1,30 @@
-
 const db = require('../../DB/connection');
 
+// Create a new user with password (using transaction)
 exports.createUser = async function createUser(userData) {
     const { username, email, passwordHash } = userData;
     const userQuery = 'INSERT INTO Users (Username, Email) VALUES (?, ?)';
     const passwordQuery = 'INSERT INTO Passwords (UserID, PasswordHash) VALUES (?, ?)';
     const userValues = [username, email];
 
-    let connection;
     try {
-        connection = await db.getConnection();
-        await connection.beginTransaction();
+        await db.beginTransaction();
 
-        const [userResult] = await connection.execute(userQuery, userValues);
+        const [userResult] = await db.execute(userQuery, userValues);
         const userId = userResult.insertId;
 
         const passwordValues = [userId, passwordHash];
-        await connection.execute(passwordQuery, passwordValues);
+        await db.execute(passwordQuery, passwordValues);
 
-        await connection.commit();
-        connection.release();
-
+        await db.commit();
         return userId;
     } catch (error) {
-        if (connection) await connection.rollback();
+        await db.rollback();
         throw new Error('Error creating user: ' + error.message);
     }
 };
 
+// Get user by ID
 exports.getUserById = async function getUserById(userId) {
     const query = `
         SELECT Users.UserID, Users.Username, Users.Email, Users.CreatedAt, Passwords.PasswordHash 
@@ -43,6 +40,7 @@ exports.getUserById = async function getUserById(userId) {
     }
 };
 
+// Get all users
 exports.getAllUsers = async function getAllUsers() {
     const query = 'SELECT * FROM Users';
     try {
@@ -53,6 +51,7 @@ exports.getAllUsers = async function getAllUsers() {
     }
 };
 
+// Update user info and password (using transaction)
 exports.updateUserById = async function updateUserById(userId, userData) {
     const { username, email, passwordHash } = userData;
     const userQuery = 'UPDATE Users SET Username = ?, Email = ? WHERE UserID = ?';
@@ -60,24 +59,21 @@ exports.updateUserById = async function updateUserById(userId, userData) {
     const userValues = [username, email, userId];
     const passwordValues = [passwordHash, userId];
 
-    let connection;
     try {
-        connection = await db.getConnection();
-        await connection.beginTransaction();
+        await db.beginTransaction();
 
-        await connection.execute(userQuery, userValues);
-        await connection.execute(passwordQuery, passwordValues);
+        await db.execute(userQuery, userValues);
+        await db.execute(passwordQuery, passwordValues);
 
-        await connection.commit();
-        connection.release();
-
+        await db.commit();
         return true;
     } catch (error) {
-        if (connection) await connection.rollback();
+        await db.rollback();
         throw new Error('Error updating user: ' + error.message);
     }
 };
 
+// Delete user by ID
 exports.deleteUserById = async function deleteUserById(userId) {
     const query = 'DELETE FROM Users WHERE UserID = ?';
     try {
@@ -87,4 +83,3 @@ exports.deleteUserById = async function deleteUserById(userId) {
         throw new Error('Error deleting user: ' + error.message);
     }
 };
-

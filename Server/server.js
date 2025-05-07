@@ -8,13 +8,21 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-
 app.use("/users", userRoute);
+app.use("/", (req, res) =>{
+    try {
+     
+        res.status(200).json("sari");
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Routes
 
 
 
 // Start the server
-app.listen(3306, () => {
-    console.log(`Server is running on http://localhost:3306`);
+app.listen(3000, () => {
+    console.log(`Server is running on http://localhost:3000`);
 });

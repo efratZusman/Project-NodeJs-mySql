@@ -1,10 +1,13 @@
 const mysql = require('mysql2/promise');
-const db = require('./connection');
+const connection = require('./connection');
 
 const initDb = async () => {
-  const connection = await mysql.createConnection(db);
+  // const connection = await mysql.createConnection(db);
 
   try {
+    await connection.query(`CREATE DATABASE IF NOT EXISTS my_project_db`);
+    await connection.query(`USE my_project_db`);
+  
     await connection.query(`DROP TABLE IF EXISTS Comments, Posts, Todos, Passwords, Users`);
 
     // יצירת טבלאות
