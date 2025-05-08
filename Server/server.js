@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const userRoute = require('./routes/UserRoute');
 const postRoute = require('./routes/PostRoute');
 const commentRoute = require('./routes/CommentRoute');
@@ -8,7 +9,9 @@ const todoRoute = require('./routes/TodoRoute');
 
 const app = express();
 // const port = 3000;
-
+app.use(cors({
+    origin: 'http://localhost:5173'
+  }));
 // Middleware
 app.use(express.json());
 app.use("/users", userRoute);
@@ -24,7 +27,7 @@ app.use("/", (req, res) =>{
     }
 });
 
-// Routes
+
 
 
 

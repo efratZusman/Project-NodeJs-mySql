@@ -61,7 +61,8 @@ function LogIn() {
                 <button className={styles.loginButton} type="submit">Log in</button>
             </form>
             <Link to="/register" className={styles.signupLink}>  Don't have an account? Sign up</Link>
-            <div data>{errorMessage}</div>
+            {/* <div data>{errorMessage}</div> */}
+            <div data-error={errorMessage}>{errorMessage}</div>
         </>
     );
 
