@@ -24,16 +24,16 @@ exports.createUser = async function createUser(userData) {
     }
 };
 
-// Get user by ID
-exports.getUserById = async function getUserById(userId) {
+// Get user by Username
+exports.getUserByUsername = async function getUserByUsername(username) {
     const query = `
         SELECT Users.UserID, Users.Username, Users.Email, Users.CreatedAt, Passwords.PasswordHash 
         FROM Users 
         LEFT JOIN Passwords ON Users.UserID = Passwords.UserID 
-        WHERE Users.UserID = ?
+        WHERE Users.Username = ?
     `;
     try {
-        const [rows] = await db.execute(query, [userId]);
+        const [rows] = await db.execute(query, [username]);
         return rows[0];
     } catch (error) {
         throw new Error('Error fetching user: ' + error.message);
@@ -51,19 +51,21 @@ exports.getAllUsers = async function getAllUsers() {
     }
 };
 
-// Update user info and password (using transaction)
-exports.updateUserById = async function updateUserById(userId, userData) {
-    const { username, email, passwordHash } = userData;
-    const userQuery = 'UPDATE Users SET Username = ?, Email = ? WHERE UserID = ?';
-    const passwordQuery = 'UPDATE Passwords SET PasswordHash = ? WHERE UserID = ?';
-    const userValues = [username, email, userId];
-    const passwordValues = [passwordHash, userId];
+// Update user info and password (by username)
+exports.updateUserByUsername = async function updateUserByUsername(username, userData) {
+    const { email, passwordHash } = userData;
 
+    const userQuery = 'UPDATE Users SET Email = ? WHERE Username = ?';
+    const passwordQuery = `
+        UPDATE Passwords 
+        SET PasswordHash = ? 
+        WHERE UserID = (SELECT UserID FROM Users WHERE Username = ?)
+    `;
     try {
         await db.beginTransaction();
 
-        await db.execute(userQuery, userValues);
-        await db.execute(passwordQuery, passwordValues);
+        await db.execute(userQuery, [email, username]);
+        await db.execute(passwordQuery, [passwordHash, username]);
 
         await db.commit();
         return true;
@@ -73,11 +75,11 @@ exports.updateUserById = async function updateUserById(userId, userData) {
     }
 };
 
-// Delete user by ID
-exports.deleteUserById = async function deleteUserById(userId) {
-    const query = 'DELETE FROM Users WHERE UserID = ?';
+// Delete user by username
+exports.deleteUserByUsername = async function deleteUserByUsername(username) {
+    const query = 'DELETE FROM Users WHERE Username = ?';
     try {
-        const [result] = await db.execute(query, [userId]);
+        const [result] = await db.execute(query, [username]);
         return result.affectedRows > 0;
     } catch (error) {
         throw new Error('Error deleting user: ' + error.message);

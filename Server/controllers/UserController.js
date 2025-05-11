@@ -10,11 +10,11 @@ exports.getAllUsers = async function getAllUsers(req, res) {
     }
 };
 
-// Get user by ID
-exports.getUserById = async function getUserById(req, res) {
+// Get user by username
+exports.getUserByUsername = async function getUserByUsername(req, res) {
     try {
-        const userId = req.params.id;
-        const user = await UserService.getUserById(userId);
+        const username = req.params.username;
+        const user = await UserService.getUserByUsername(username);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -29,32 +29,32 @@ exports.createUser = async function createUser(req, res) {
     try {
         const userData = req.body;
         const newUser = await UserService.createUser(userData);
-        res.status(201).json(newUser);
+        res.status(201).json({ userId: newUser });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
 
-// Update an existing user
-exports.updateUserById = async function updateUserById(req, res) {
+// Update an existing user by username
+exports.updateUserByUsername = async function updateUserByUsername(req, res) {
     try {
-        const userId = req.params.id;
+        const username = req.params.username;
         const userData = req.body;
-        const updatedUser = await UserService.updateUserById(userId, userData);
-        if (!updatedUser) {
+        const updated = await UserService.updateUserByUsername(username, userData);
+        if (!updated) {
             return res.status(404).json({ message: 'User not found' });
         }
-        res.status(200).json(updatedUser);
+        res.status(200).json({ message: 'User updated successfully' });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
 
-// Delete a user
-exports.deleteUserById = async function deleteUserById(req, res) {
+// Delete a user by username
+exports.deleteUserByUsername = async function deleteUserByUsername(req, res) {
     try {
-        const userId = req.params.id;
-        const deleted = await UserService.deleteUserById(userId);
+        const username = req.params.username;
+        const deleted = await UserService.deleteUserByUsername(username);
         if (!deleted) {
             return res.status(404).json({ message: 'User not found' });
         }

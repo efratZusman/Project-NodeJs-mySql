@@ -1,0 +1,63 @@
+import React, { useState, useEffect } from 'react';
+import { useUserContext } from '../UserContext';
+import styles from './Posts.module.css';
+import ApiService from '../ApiSevice';
+
+function ViewPost(props) {
+    const { post, index, setPosts, posts, setSelectedPost } = props;
+    const [editPostBody, setEditPostBody] = useState('');
+    const [isEditing, setIsEditing] = useState(false);
+    const { userData } = useUserContext();
+    const userId = userData.id;
+    const apiService = new ApiService();
+
+    const handleUpdatePost = async (id, newBody) => {
+        const updatedPost = { ...posts[index], body: newBody };
+        try {
+            const response = await apiService.patch(`http://localhost:3000/posts/${id}`, updatedPost);
+            const updatedPosts = [...posts];
+            updatedPosts[index] = response;
+            setPosts(updatedPosts);
+            setIsEditing(false);
+        } catch (error) {
+            console.error('Error updating post:', error);
+        }
+    };
+
+    return (
+        <>
+            <div>
+                <p><strong>{post.title}</strong></p>
+                {isEditing ? (
+                    <div>
+                        <textarea
+                            value={editPostBody}
+                            onChange={(e) => setEditPostBody(e.target.value)}
+                        />
+                        <button onClick={() => handleUpdatePost(post.id, editPostBody)}>
+                            Save
+                        </button>
+                        <button onClick={() => setIsEditing(false)}>
+                            Cancel
+                        </button>
+                    </div>
+                ) : (
+                    <div>
+                        <p>{post.body}</p>
+                        {(post.userId == userId) && (
+                            <span className={styles.editIcon}
+                                onClick={() => {
+                                    setEditPostBody(post.body);
+                                    setIsEditing(true);
+                                }}>
+                            </span>
+                        )}
+                        <button onClick={() => setSelectedPost(null)}>Close</button>
+                    </div>
+                )}
+
+            </div>
+        </>
+    );
+}
+export default ViewPost;
