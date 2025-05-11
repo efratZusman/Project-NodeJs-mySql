@@ -15,14 +15,14 @@ function Home() {
 
     useEffect(() => {
         if (isInitialized) {
-            fetchUserDetails(userData.id);
-            navigate(`/user/${userData.id}/home`)
+            fetchUserDetails(userData.username);
+            navigate(`/user/${userData.username}/home`)
         }
     }, [isInitialized]);
 
-    const fetchUserDetails = async (userId) => {
+    const fetchUserDetails = async (username) => {
         try {
-            const data = await apiService.fetch(`http://localhost:3000/users?id=${userId}`);
+            const data = await apiService.fetch(`http://localhost:3000/users?id=${username}`);
             if (data) {
                 const user = data[0];
                 setName(user.name);
@@ -46,15 +46,15 @@ function Home() {
             </button>
             <h1 className={styles.mainTitle}>Welcome, {name}!!!</h1>
             <div className={styles.content}>
-                <Link to={`/user/${userData.id}/todos`} className={styles.card}>
+                <Link to={`/user/${userData.username}/todos`} className={styles.card}>
                     <div className={`${styles.image} ${styles.todosCard}`}></div>
                     <span>Todos</span>
                 </Link>
-                <Link to={`/user/${userData.id}/posts`} className={styles.card}>
+                <Link to={`/user/${userData.username}/posts`} className={styles.card}>
                     <div className={`${styles.image} ${styles.postsCard}`}></div>
                     <span>Posts</span>
                 </Link>
-                <Link to={`/user/${userData.id}/albums`} className={styles.card}>
+                <Link to={`/user/${userData.username}/albums`} className={styles.card}>
                     <div className={`${styles.image} ${styles.albumsCard}`}></div>
                     <span>Albums</span>
                 </Link>
