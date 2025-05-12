@@ -8,7 +8,7 @@ import ApiService from '../ApiSevice';
 function Home() {
     const navigate = useNavigate();
     const { userData, setUserData, isInitialized } = useUserContext();
-    const [name, setName] = useState("");
+    // const [name, setName] = useState("");
     const [userDetails, setUserDetails] = useState({});
     const [showUserInfo, setShowUserInfo] = useState(false);
     const apiService = new ApiService();
@@ -22,11 +22,11 @@ function Home() {
 
     const fetchUserDetails = async (userId) => {
         try {
-            const data = await apiService.fetch(`http://localhost:3000/users?id=${userId}`);
+            const data = await apiService.fetch(`http://localhost:3000/users/${userData.username}`);
             if (data) {
-                const user = data[0];
-                setName(user.name);
-                setUserDetails(user);
+                console.log('User details:', data)
+                // setName(data.Username);
+                setUserDetails(data);
             }
         } catch (error) {
             console.error('Error fetching user details:', error);
@@ -44,7 +44,7 @@ function Home() {
             <button onClick={handleLogout} className={styles.logoutButton}>
                 Log Out
             </button>
-            <h1 className={styles.mainTitle}>Welcome, {name}!!!</h1>
+            <h1 className={styles.mainTitle}>Welcome, {userData.username}!!!</h1>
             <div className={styles.content}>
                 <Link to={`/user/${userData.id}/todos`} className={styles.card}>
                     <div className={`${styles.image} ${styles.todosCard}`}></div>
@@ -54,10 +54,10 @@ function Home() {
                     <div className={`${styles.image} ${styles.postsCard}`}></div>
                     <span>Posts</span>
                 </Link>
-                <Link to={`/user/${userData.id}/albums`} className={styles.card}>
+                {/* <Link to={`/user/${userData.id}/albums`} className={styles.card}>
                     <div className={`${styles.image} ${styles.albumsCard}`}></div>
                     <span>Albums</span>
-                </Link>
+                </Link> */}
                 <div className={styles.infoSection}>
                     <div onClick={()=>{setShowUserInfo(true);}} className={styles.card}>
                         <div className={`${styles.image} ${styles.infoCard}`}></div>

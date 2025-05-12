@@ -12,12 +12,18 @@ const app = express();
 app.use(cors({
     origin: 'http://localhost:5173'
   }));
+
+  console.log("cors");
 // Middleware
 app.use(express.json());
 app.use("/users", userRoute);
 app.use("/todos", todoRoute);
 app.use("/comments", commentRoute);
 app.use("/posts", postRoute);
+
+
+
+
 app.use("/", (req, res) =>{
     try {
      
@@ -26,10 +32,6 @@ app.use("/", (req, res) =>{
         res.status(500).json({ error: error.message });
     }
 });
-
-
-
-
 
 // Start the server
 app.listen(3000, () => {

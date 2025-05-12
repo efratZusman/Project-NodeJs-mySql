@@ -20,4 +20,7 @@ router.get('/', userController.getAllUsers);
 // Create user
 router.post('/', userController.createUser);
 
+
+
+
 module.exports = router;

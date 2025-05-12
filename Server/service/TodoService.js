@@ -22,7 +22,9 @@ exports.getTodoById = async function getTodoById(todoId) {
     const query = 'SELECT * FROM Todos WHERE TodoID = ?';
     try {
         const [rows] = await db.execute(query, [todoId]);
-        return rows[0];
+        console.log(rows[0]);
+        console.log(rows);
+        return rows;
     } catch (error) {
         throw new Error('Error fetching todo: ' + error.message);
     }
@@ -71,3 +73,15 @@ exports.deleteTodoById = async function deleteTodoById(todoId) {
         throw new Error('Error deleting todo: ' + error.message);
     }
 };
+
+exports.getTodosByUserId = async function(userId) {
+    const query = 'SELECT * FROM Todos WHERE UserID = ?';
+    try {
+        const [rows] = await db.execute(query, [userId]);
+        console.log(rows);
+        return rows; // זה מערך של todos
+    } catch (error) {
+        throw new Error('Error fetching todos: ' + error.message);
+    }
+};
+

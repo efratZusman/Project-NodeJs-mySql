@@ -1,7 +1,7 @@
 import React from 'react';
 
 function UserInfo({ userDetails, onClose }) {
-    const fieldsToShow = [ "username", "name", "email", "phone",];
+    const fieldsToShow = [ "Username", "Email", "CreatedAt",];
     return (
         <div style={{ border: '1px solid black', padding: '10px', margin: '10px' }}>
             <h2>User Information</h2>

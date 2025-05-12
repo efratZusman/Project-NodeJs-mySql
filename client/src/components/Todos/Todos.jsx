@@ -7,29 +7,40 @@ import ApiService from '../ApiSevice';
 
 function Todos() {
     const { userData, isInitialized } = useUserContext();
-    const userId = userData.id;
+    // const userId = userData.id;
     const [todos, setTodos] = useState([]);
     const [filter, setFilter] = useState('');
     const [newTodo, setNewTodo] = useState('');
     const [searchType, setSearchType] = useState('title');
     const [completedFilter, setCompletedFilter] = useState('all');
-    const { username } = userData;
+    // const { username } = userData;
     const apiService = new ApiService();
 
     useEffect(() => {
         if (isInitialized) {
-            fetchTodos(username);
+            fetchTodos(userData.username);
         }
     }, [isInitialized]);
 
+    // const fetchTodos = async () => {
+    //     try {
+    //         const data = await apiService.fetch(`http://localhost:3000/todos/${userData.id}`);
+    //         console.log('Fetched todos:', data);
+    //         setTodos([data]);
+    //     } catch (error) {
+    //         console.error('Error fetching todos:', error);
+    //     }
+    // };
     const fetchTodos = async () => {
-        try {
-            const data = await apiService.fetch(`http://localhost:3000/todos?userId=${userId}`);
-            setTodos(data);
-        } catch (error) {
-            console.error('Error fetching todos:', error);
-        }
-    };
+    try {
+        const data = await apiService.fetch(`http://localhost:3000/todos/user/${userData.id}`);
+        console.log('Fetched todos:', data);
+        setTodos(data); // אין .todos כי זה כבר מערך
+    } catch (error) {
+        console.error('Error fetching todos:', error);
+    }
+};
+
 
     const handleSort = (criteria) => {
         let sortedTodos = [...todos];

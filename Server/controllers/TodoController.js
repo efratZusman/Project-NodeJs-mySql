@@ -17,6 +17,7 @@ exports.getTodoById = async (req, res) => {
         if (!todo) {
             return res.status(404).json({ message: 'Todo not found' });
         }
+        console.log(res.status(200).json(todo));
         res.status(200).json(todo);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -58,3 +59,12 @@ exports.deleteTodoById = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+exports.getTodosByUserId = async (req, res) => {
+    try {
+        const todos = await TodoService.getTodosByUserId(req.params.id);
+        res.status(200).json(todos); // שולח ישירות את המערך
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
