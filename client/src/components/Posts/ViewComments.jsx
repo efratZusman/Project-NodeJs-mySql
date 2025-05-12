@@ -26,7 +26,7 @@ function ViewComments() {
 
     const fetchComments = async (postId) => {
         try {
-            const data = await apiService.fetch(`http://localhost:3000/comments?postId=${postId}`);
+            const data = await apiService.get(`http://localhost:3000/comments/${postId}`);
             setComments(data);
         } catch (error) {
             console.error('Error fetching comments:', error);
@@ -35,7 +35,7 @@ function ViewComments() {
 
     const findUserDetails = async () => {
         try {
-            const data = await apiService.fetch(`http://localhost:3000/users?username=${username}`);
+            const data = await apiService.get(`http://localhost:3000/users/${username}`);
             if (data)
                 setUserDetails({ userEmail: data[0].email, userName: data[0].name });
         } catch (error) {
@@ -46,10 +46,11 @@ function ViewComments() {
     const handleAddComment = async (postId, commentBody) => {
         if (commentBody.trim()) {
             const newComment = {
-                postId,
-                name: userDetails.userName,
-                email: userDetails.userEmail,
-                body: commentBody,
+                postID: postId,
+                // name: userDetails.userName,
+                // email: userDetails.userEmail,
+                UserID: userData.id,
+                content: commentBody,
             };
 
             try {
@@ -63,7 +64,7 @@ function ViewComments() {
     };
 
     const handleDeleteComment = async (index) => {
-        const commentId = comments[index].id;
+        const commentId = comments[index].CommentID;
         try {
             await apiService.delete(`http://localhost:3000/comments/${commentId}`);
             const updatedComments = [...comments];
@@ -76,14 +77,14 @@ function ViewComments() {
 
     const handleEditComment = async (index, newBody) => {
         if (newBody.trim()) {
-            const commentId = comments[index].id;
+            const commentId = comments[index].CommentID;
             const updatedComment = {
                 ...comments[index],
-                body: newBody,
+                content: newBody,
             };
 
             try {
-                const response = await apiService.patch(`http://localhost:3000/comments/${commentId}`, updatedComment);
+                const response = await apiService.put(`http://localhost:3000/comments/${commentId}`, updatedComment);
                     const updatedComments = [...comments];
                     updatedComments[index] = updatedComment;
                     setComments(updatedComments);
@@ -98,15 +99,15 @@ function ViewComments() {
     return (
         <div className={styles.container}>
             <NavigationButtons />
-            <button className={styles.back} onClick={() => { navigate(`/user/${userData.username}/posts`) }}>Back To Posts</button>
+            <button className={styles.back} onClick={() => { navigate(`/user/${userData.id}/posts`) }}>Back To Posts</button>
             <h4 className={styles.title}>Comments</h4>
             <ul className={styles.commentList}>
                 {comments.map((comment, index) => (
-                    <li key={comment.id} className={styles.commentItem}>
-                        <p><strong>Name:</strong> {comment.name}</p>
-                        <p><strong>Email:</strong> {comment.email}</p>
-                        <p><strong>Comment:</strong> {comment.body}</p>
-                        {comment.email === userDetails.userEmail && (
+                    <li key={comment.CommentID} className={styles.commentItem}>
+                        <p><strong>Name:</strong> {comment.Username}</p>
+                        <p><strong>Email:</strong> {comment.Email}</p>
+                        <p><strong>Comment:</strong> {comment.content}</p>
+                        {comment.Email === userDetails.userEmail && (
                             <div className={styles.actions}>
                                 <span
                                     className={styles.deleteButton}
@@ -117,7 +118,7 @@ function ViewComments() {
                                     className={styles.editButton}
                                     onClick={() => {
                                         setEditedCommentIndex(index);
-                                        setEditedCommentBody(comment.body);
+                                        setEditedCommentBody(comment.content);
                                     }}
                                 >
                                     Edit

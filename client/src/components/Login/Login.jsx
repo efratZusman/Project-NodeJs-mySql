@@ -41,7 +41,7 @@ function Login() {
             addUserToLocalStorage(user.UserID);
             setUserData({ ...userData, id: user.UserID });
             setWebsite('');
-            navigate(`/user/${user.Username}/home`);
+            navigate(`/user/${user.id}/home`);
             return true;
         }
         return false;

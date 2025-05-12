@@ -12,9 +12,11 @@ function ViewPost(props) {
     const apiService = new ApiService();
 
     const handleUpdatePost = async (id, newBody) => {
-        const updatedPost = { ...posts[index], body: newBody };
+        console.log(posts[index]);
+        const updatedPost = { ...posts[index], content: newBody };
         try {
-            const response = await apiService.patch(`http://localhost:3000/posts/${id}`, updatedPost);
+            const response = await apiService.put(`http://localhost:3000/posts/${id}`, updatedPost);
+            console.log('Post updated:', response);
             const updatedPosts = [...posts];
             updatedPosts[index] = response;
             setPosts(updatedPosts);
@@ -27,14 +29,13 @@ function ViewPost(props) {
     return (
         <>
             <div>
-                <p><strong>{post.title}</strong></p>
                 {isEditing ? (
                     <div>
                         <textarea
                             value={editPostBody}
                             onChange={(e) => setEditPostBody(e.target.value)}
                         />
-                        <button onClick={() => handleUpdatePost(post.id, editPostBody)}>
+                        <button onClick={() => handleUpdatePost(post.PostID, editPostBody)}>
                             Save
                         </button>
                         <button onClick={() => setIsEditing(false)}>
@@ -43,11 +44,11 @@ function ViewPost(props) {
                     </div>
                 ) : (
                     <div>
-                        <p>{post.body}</p>
-                        {(post.userId == userId) && (
+                        <p>{post.Content}</p>
+                        {(post.UserID == userData.id) && (
                             <span className={styles.editIcon}
                                 onClick={() => {
-                                    setEditPostBody(post.body);
+                                    setEditPostBody(post.Content);
                                     setIsEditing(true);
                                 }}>
                             </span>

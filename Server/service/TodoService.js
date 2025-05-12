@@ -2,21 +2,37 @@ const db = require('../../DB/connection');
 
 // Create a new todo
 exports.createTodo = async function createTodo(todoData) {
-    const { userId, title, description, isCompleted = false } = todoData;
+    const { UserID, Title, IsCompleted = false } = todoData;
     const query = `
-        INSERT INTO Todos (UserID, Title, Description, IsCompleted) 
-        VALUES (?, ?, ?, ?)
+        INSERT INTO Todos (UserID, Title, IsCompleted) 
+        VALUES (?, ?, ?)
     `;
-    const values = [userId, title, description, isCompleted];
+    const values = [UserID, Title, IsCompleted];
 
     try {
         const [result] = await db.execute(query, values);
-        return result.insertId;
+        const insertedTodoQuery = 'SELECT * FROM Todos WHERE TodoID = ?';
+        console.log(result);
+          console.log("jjjjjjjjjjjjjjjjjjjj");
+        const [insertedTodo] = await db.execute(insertedTodoQuery, [result.insertId]);
+        return insertedTodo[0];
     } catch (error) {
         throw new Error('Error creating todo: ' + error.message);
     }
 };
 
+exports.patchTodoById = async (id, updates) => {
+    try {
+        const fields = Object.keys(updates).map((key) => `${key} = ?`).join(', ');
+        const values = Object.values(updates);
+        const query = `UPDATE todos SET ${fields} WHERE id = ?`;
+        const [result] = await connection.execute(query, [...values, id]);
+        return result.affectedRows > 0 ? { id, ...updates } : null;
+    } catch (error) {
+        console.error('Error in patchTodoById service:', error);
+        throw error;
+    }
+};
 // Get todo by ID
 exports.getTodoById = async function getTodoById(todoId) {
     const query = 'SELECT * FROM Todos WHERE TodoID = ?';
@@ -47,17 +63,22 @@ exports.getAllTodos = async function getAllTodos(userId = null) {
 
 // Update todo by ID
 exports.updateTodoById = async function updateTodoById(todoId, todoData) {
-    const { title, description, isCompleted } = todoData;
+    const { Title, IsCompleted } = todoData;
     const query = `
         UPDATE Todos 
-        SET Title = ?, Description = ?, IsCompleted = ?
+        SET Title = ?,  IsCompleted = ?
         WHERE TodoID = ?
     `;
-    const values = [title, description, isCompleted, todoId];
+    const values = [Title, IsCompleted, todoId];
 
     try {
         const [result] = await db.execute(query, values);
-        return result.affectedRows > 0;
+        if (result.affectedRows > 0) {
+            const updatedTodoQuery = 'SELECT * FROM Todos WHERE TodoID = ?';
+            const [updatedTodo] = await db.execute(updatedTodoQuery, [todoId]);
+            return updatedTodo[0];
+        }
+        return null;
     } catch (error) {
         throw new Error('Error updating todo: ' + error.message);
     }

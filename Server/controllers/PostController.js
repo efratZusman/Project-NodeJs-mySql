@@ -10,6 +10,20 @@ exports.getAllPosts = async (req, res) => {
     }
 };
 
+exports.partialUpdatePostById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updates = req.body; // הנתונים לעדכון מגיעים מגוף הבקשה
+        const updatedPost = await postService.partialUpdatePostById(id, updates);
+        if (!updatedPost) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+        res.status(200).json(updatedPost);
+    } catch (error) {
+        console.error('Error patching post:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
 // Get post by ID
 exports.getPostById = async (req, res) => {
     try {

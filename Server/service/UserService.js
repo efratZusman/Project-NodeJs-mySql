@@ -51,6 +51,19 @@ exports.getAllUsers = async function getAllUsers() {
     }
 };
 
+exports.partialUpdateUserByUsername = async (username, updates) => {
+    try {
+        const fields = Object.keys(updates).map((key) => `${key} = ?`).join(', ');
+        const values = Object.values(updates);
+        const query = `UPDATE users SET ${fields} WHERE username = ?`;
+        const [result] = await connection.execute(query, [...values, username]);
+        return result.affectedRows > 0 ? { username, ...updates } : null;
+    } catch (error) {
+        console.error('Error in partialUpdateUserByUsername service:', error);
+        throw error;
+    }
+};
+
 // Update user info and password (by username)
 exports.updateUserByUsername = async function updateUserByUsername(username, userData) {
     const { email, passwordHash } = userData;

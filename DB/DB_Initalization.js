@@ -35,7 +35,6 @@ const initDb = async () => {
         TodoID INT PRIMARY KEY AUTO_INCREMENT,
         UserID INT NOT NULL,
         Title VARCHAR(100) NOT NULL,
-        Description TEXT,
         IsCompleted BOOLEAN DEFAULT FALSE,
         CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
@@ -85,12 +84,12 @@ const initDb = async () => {
     `);
 
     await connection.query(`
-      INSERT INTO Todos (UserID, Title, Description, IsCompleted) VALUES 
-      (1, 'Buy groceries', 'Milk, Bread, Eggs', FALSE),
-      (2, 'Finish project', 'Complete the Node.js project', FALSE),
-      (3, 'Plan vacation', 'Decide on destination and book tickets', FALSE),
-      (4, 'Fix the sink', 'Repair the kitchen sink', FALSE),
-      (5, 'Read a book', 'Start reading a new novel', FALSE)
+      INSERT INTO Todos (UserID, Title, IsCompleted) VALUES 
+      (1, 'Buy groceries', FALSE),
+      (2, 'Finish project', FALSE),
+      (3, 'Plan vacation', FALSE),
+      (4, 'Fix the sink',  FALSE),
+      (5, 'Read a book', FALSE)
     `);
 
     await connection.query(`

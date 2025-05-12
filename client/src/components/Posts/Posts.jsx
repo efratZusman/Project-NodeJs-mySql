@@ -33,7 +33,8 @@ function Posts() {
 
     const fetchPosts = async () => {
         try {
-            const data = await apiService.fetch(`http://localhost:3000/posts?userId=${selectedUserId}`);
+            console.log(userId)
+            const data = await apiService.get(`http://localhost:3000/posts`);
             setPosts(data);
         } catch (error) {
             console.error('Error fetching posts:', error);
@@ -42,7 +43,7 @@ function Posts() {
 
     const fetchUsers = async () => {
         try {
-            const data = await apiService.fetch(`http://localhost:3000/users`);
+            const data = await apiService.get(`http://localhost:3000/users`);
             setUsers(data);
         } catch (error) {
             console.error('Error fetching users:', error);
@@ -52,9 +53,9 @@ function Posts() {
     const handleAddPost = async () => {
         if (newPostTitle.trim() && newPostBody.trim()) {
             const newPost = {
-                userId,
+                userId: userId,
                 title: newPostTitle,
-                body: newPostBody,
+                content: newPostBody,
             };
             try {
                 const post = await apiService.post('http://localhost:3000/posts', newPost);
@@ -79,17 +80,17 @@ function Posts() {
         }
     };
 
-    const handleChangeUser = (userId) => {
-        setSelectedUserId(userId);
-        setSelectedPost(null);
-    };
+    // const handleChangeUser = (userId) => {
+    //     setSelectedUserId(userId);
+    //     setSelectedPost(null);
+    // };
 
     return (
 
         <div className={styles.container}>
             <NavigationButtons />
             <div className={styles.topBar}>
-                <div className={styles.searchBar}>
+                {/* <div className={styles.searchBar}>
                     <input
                         type="text"
                         placeholder="Search posts..."
@@ -110,7 +111,7 @@ function Posts() {
                             </option>
                         ))}
                     </select>
-                </div>
+                </div> */}
             </div>
             <h1 className={styles.title}>Posts</h1>
             <div className={styles.newPost}>
@@ -131,25 +132,23 @@ function Posts() {
             <ul className={styles.postList}>
 
                 {posts
-                    .filter(post =>
-                        post.id.toString().includes(searchTerm) ||
-                        post.title.toLowerCase().includes(searchTerm.toLowerCase())
-                    ).map((post, index) => (
-                        <li key={post.id} className={styles.postItem}>
+                 
+                    .map((post, index) => (
+                        <li key={post.PostID} className={styles.postItem}>
                             <div className={styles.postHeader}>
-                                <span className={styles.postTitle}>{post.id} - {post.title}</span>
+                                <span className={styles.postTitle}>{post.PostID} - {post.Title}</span>
                                 <div className={styles.actions}>
                                     <button className={styles.button} onClick={() => setSelectedPost(post)}>View Post</button>
-                                    <button className={styles.button} onClick={() => navigate(`/user/${userId}/post/${post.id}/comments`)}>Comments</button>
+                                    <button className={styles.button} onClick={() => navigate(`/user/${userId}/post/${post.PostID}/comments`)}>Comments</button>
                                     {selectedUserId == userId && (
                                         <button
                                             className={styles.deleteButton}
-                                            onClick={() => handleDeletePost(index, post.id)}
+                                            onClick={() => handleDeletePost(index, post.PostID)}
                                         ></button>
                                     )}
                                 </div>
                             </div>
-                            {selectedPost && selectedPost.id === post.id && (
+                            {selectedPost && selectedPost.PostID === post.PostID && (
                                 <ViewPost
                                     post={post}
                                     index={index}

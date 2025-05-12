@@ -12,6 +12,21 @@ class ApiService {
             return await this.checkResponseStatus(response);
     }
 
+    async put(url, newData) {
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newData),
+            });
+            return await this.checkResponseStatus(response);
+    }
+    async get(url) {
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        });
+        return await this.checkResponseStatus(response);
+    }
     async post(url,newData) {
             const response = await fetch(url, {
                 method: 'POST',

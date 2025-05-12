@@ -11,25 +11,41 @@ exports.createComment = async function createComment(commentData) {
 
     try {
         const [result] = await db.execute(query, values);
-        return result.insertId;
+        const newCommentId = result.insertId;
+
+        // Fetch the newly created comment along with user details
+        const fetchQuery = `
+            SELECT Comments.CommentID, Comments.Content, Comments.CreatedAt, Users.UserID, Users.UserName, Users.Email
+            FROM Comments
+            JOIN Users ON Comments.UserID = Users.UserID
+            WHERE Comments.CommentID = ?
+        `;
+        const [rows] = await db.execute(fetchQuery, [newCommentId]);
+        return rows[0];
     } catch (error) {
         throw new Error('Error creating comment: ' + error.message);
     }
 };
 
 // Get comment by ID
-exports.getCommentById = async function getCommentById(commentId) {
-    const query = 'SELECT * FROM Comments WHERE CommentID = ?';
+exports.getCommentsByPostId = async function getCommentsByPostId(postId) {
+    const query = `
+        SELECT Comments.CommentID, Comments.Content, Comments.CreatedAt, Users.UserName, Users.Email
+        FROM Comments
+        JOIN Users ON Comments.UserID = Users.UserID
+        WHERE Comments.PostID = ?
+        ORDER BY Comments.CreatedAt ASC
+    `;
     try {
-        const [rows] = await db.execute(query, [commentId]);
-        return rows[0];
+        const [rows] = await db.execute(query, [postId]);
+        return rows;
     } catch (error) {
-        throw new Error('Error fetching comment: ' + error.message);
+        throw new Error('Error fetching comments by post ID: ' + error.message);
     }
 };
 
 // Get all comments (optionally by post)
-exports.getAllComments = async function getAllComments(postId = null) {
+exports.getAllComments = async function getAllComments() {
     const query = postId
         ? 'SELECT * FROM Comments WHERE PostID = ?'
         : 'SELECT * FROM Comments';
@@ -54,7 +70,20 @@ exports.updateCommentById = async function updateCommentById(commentId, content)
 
     try {
         const [result] = await db.execute(query, values);
-        return result.affectedRows > 0;
+
+        if (result.affectedRows > 0) {
+            // Fetch the updated comment
+            const fetchQuery = `
+                SELECT Comments.CommentID, Comments.Content, Comments.CreatedAt, Users.UserName, Users.Email
+                FROM Comments
+                JOIN Users ON Comments.UserID = Users.UserID
+                WHERE Comments.CommentID = ?
+            `;
+            const [rows] = await db.execute(fetchQuery, [commentId]);
+            return rows[0];
+        } else {
+            return null; // No rows were updated
+        }
     } catch (error) {
         throw new Error('Error updating comment: ' + error.message);
     }
@@ -104,5 +133,18 @@ exports.getCommentsByUserId = async function getCommentsByUserId(userId) {
         return rows;
     } catch (error) {
         throw new Error('Error fetching comments: ' + error.message);
+    }
+};
+
+exports.partialUpdateCommentById = async (id, updates) => {
+    try {
+        const fields = Object.keys(updates).map((key) => `${key} = ?`).join(', ');
+        const values = Object.values(updates);
+        const query = `UPDATE comments SET ${fields} WHERE id = ?`;
+        const [result] = await connection.execute(query, [...values, id]);
+        return result.affectedRows > 0 ? { id, ...updates } : null;
+    } catch (error) {
+        console.error('Error in partialUpdateCommentById service:', error);
+        throw error;
     }
 };

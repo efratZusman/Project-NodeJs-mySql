@@ -10,9 +10,10 @@ function TodoItem({ todo, index, todos, setTodos }) {
 
 
     const handleToggleComplete = async () => {
-        const updatedTodo = { ...todo, completed: !todo.completed };
+        const updatedTodo = { ...todo, IsCompleted: !todo.IsCompleted };
         try {
-            const DataBaseTodo = await apiService.patch(`http://localhost:3000/todos/${todo.id}`, updatedTodo);
+            console.log(updatedTodo);
+            const DataBaseTodo = await apiService.put(`http://localhost:3000/todos/${todo.TodoID}`, updatedTodo);
             const updatedTodos = [...todos];
             updatedTodos[index] = DataBaseTodo;
             setTodos(updatedTodos);
@@ -22,14 +23,16 @@ function TodoItem({ todo, index, todos, setTodos }) {
     };
 
     const handleEditTodo = () => {
-        setEditingId(todo.id);
-        setEditingValue(todo.title);
+        setEditingId(todo.TodoID);
+        setEditingValue(todo.Title);
     };
 
     const handleSaveTodo = async () => {
-        const updatedTodo = { ...todo, title: editingValue };
+        const updatedTodo = { ...todo, Title: editingValue };
         try {
-            const response = await apiService.patch(`http://localhost:3000/todos/${todo.id}`, updatedTodo);
+            console.log(todo);
+            
+            const response = await apiService.put(`http://localhost:3000/todos/${todo.TodoID}`, updatedTodo);
             const updatedTodos = [...todos];
             updatedTodos[index] = response;
             setTodos(updatedTodos);
@@ -48,7 +51,8 @@ function TodoItem({ todo, index, todos, setTodos }) {
 
     const handleDeleteTodo = async () => {
         try {
-            await apiService.delete(`http://localhost:3000/todos/${todo.id}`);
+              console.log(todo);
+            await apiService.delete(`http://localhost:3000/todos/${todo.TodoID}`);
             const updatedTodos = [...todos];
             updatedTodos.splice(index, 1);
             setTodos(updatedTodos);
@@ -61,11 +65,11 @@ function TodoItem({ todo, index, todos, setTodos }) {
             <input
                 className={styles.checkbox}
                 type="checkbox"
-                checked={todo.completed}
+                checked={todo.IsCompleted}
                 onChange={handleToggleComplete}
             />
             <strong className={styles.todoId}>{todo.id}</strong>
-            {editingId === todo.id ? (
+            {editingId === todo.TodoID ? (
                 <div className={styles.editingSection}>
                     <input
                         type="text"
@@ -82,7 +86,7 @@ function TodoItem({ todo, index, todos, setTodos }) {
                 </div>
             ) : (
                 <>
-                    <span className={styles.todoTitle}>{todo.title}</span>
+                    <span className={styles.todoTitle}>{todo.Title}</span>
                     <span
                         className={styles.editIcon}
                         onClick={handleEditTodo}

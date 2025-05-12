@@ -16,7 +16,7 @@ function Home() {
     useEffect(() => {
         if (isInitialized) {
             fetchUserDetails(userData.username);
-            navigate(`/user/${userData.username}/home`)
+            navigate(`/user/${userData.id}/home`)
         }
     }, [isInitialized]);
 
@@ -46,11 +46,11 @@ function Home() {
             </button>
             <h1 className={styles.mainTitle}>Welcome, {userData.username}!!!</h1>
             <div className={styles.content}>
-                <Link to={`/user/${userData.username}/todos`} className={styles.card}>
+                <Link to={`/user/${userData.id}/todos`} className={styles.card}>
                     <div className={`${styles.image} ${styles.todosCard}`}></div>
                     <span>Todos</span>
                 </Link>
-                <Link to={`/user/${userData.username}/posts`} className={styles.card}>
+                <Link to={`/user/${userData.id}/posts`} className={styles.card}>
                     <div className={`${styles.image} ${styles.postsCard}`}></div>
                     <span>Posts</span>
                 </Link>

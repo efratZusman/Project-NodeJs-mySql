@@ -18,6 +18,8 @@ router.delete('/:username', userController.deleteUserByUsername);
 router.get('/', userController.getAllUsers);
 
 // Create user
+router.patch('/:username', userController.partialUpdateUserByUsername);
+
 router.post('/', userController.createUser);
 
 

@@ -27,6 +27,7 @@ exports.getTodoById = async (req, res) => {
 // Create new todo
 exports.createTodo = async (req, res) => {
     try {
+        console.log(req.body);
         const newTodo = await TodoService.createTodo(req.body);
         res.status(201).json(newTodo);
     } catch (error) {
@@ -37,12 +38,15 @@ exports.createTodo = async (req, res) => {
 // Update todo by ID
 exports.updateTodoById = async (req, res) => {
     try {
+        console.log(req.params.id);
+        console.log(req.body);
         const updated = await TodoService.updateTodoById(req.params.id, req.body);
         if (!updated) {
             return res.status(404).json({ message: 'Todo not found' });
         }
         res.status(200).json(updated);
     } catch (error) {
+        console.error('Error updating todo:', error);
         res.status(500).json({ error: error.message });
     }
 };
@@ -57,6 +61,21 @@ exports.deleteTodoById = async (req, res) => {
         res.status(200).json({ message: 'Todo deleted successfully' });
     } catch (error) {
         res.status(500).json({ error: error.message });
+    }
+};
+
+exports.patchTodoById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updates = req.body; // הנתונים לעדכון מגיעים מגוף הבקשה
+        const updatedTodo = await todoService.patchTodoById(id, updates);
+        if (!updatedTodo) {
+            return res.status(404).json({ message: 'Todo not found' });
+        }
+        res.status(200).json(updatedTodo);
+    } catch (error) {
+        console.error('Error patching todo:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
 };
 exports.getTodosByUserId = async (req, res) => {

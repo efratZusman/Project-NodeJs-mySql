@@ -78,7 +78,7 @@ await apiService.delete(`http://localhost:3000/photos/${photoId}`);
         try {
             const photoId = photos[index].id;
             const updatedPhoto = { ...photos[index], title: updatedTitle };
-            const response = await apiService.patch(`http://localhost:3000/photos/${photoId}`, updatedPhoto);
+            const response = await apiService.put(`http://localhost:3000/photos/${photoId}`, updatedPhoto);
                 setPhotos(prevPhotos => {
                     const updatedPhotos = [...prevPhotos];
                     updatedPhotos[index] = updatedPhoto;

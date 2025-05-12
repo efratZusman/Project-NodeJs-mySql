@@ -24,6 +24,20 @@ exports.getUserByUsername = async function getUserByUsername(req, res) {
     }
 };
 
+exports.partialUpdateUserByUsername = async (req, res) => {
+    try {
+        const { username } = req.params;
+        const updates = req.body; // הנתונים לעדכון מגיעים מגוף הבקשה
+        const updatedUser = await userService.partialUpdateUserByUsername(username, updates);
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.status(200).json(updatedUser);
+    } catch (error) {
+        console.error('Error patching user:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
 // Create a new user
 exports.createUser = async function createUser(req, res) {
     try {
