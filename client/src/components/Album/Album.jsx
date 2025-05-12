@@ -16,7 +16,7 @@ function Albums() {
     useEffect(() => {
         const fetchAlbums = async () => {
             try {
-                const response = await apiService.fetch(`http://localhost:3000/albums?userId=${userData.id}`);
+                const response = await apiService.fetch(`http://localhost:3000/albums?userId=${userData.username}`);
                 setAlbums(response);
             } catch (error) {
                 console.error('Error:', error);

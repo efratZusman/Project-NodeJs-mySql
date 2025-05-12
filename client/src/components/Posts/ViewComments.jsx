@@ -98,7 +98,7 @@ function ViewComments() {
     return (
         <div className={styles.container}>
             <NavigationButtons />
-            <button className={styles.back} onClick={() => { navigate(`/user/${userData.id}/posts`) }}>Back To Posts</button>
+            <button className={styles.back} onClick={() => { navigate(`/user/${userData.username}/posts`) }}>Back To Posts</button>
             <h4 className={styles.title}>Comments</h4>
             <ul className={styles.commentList}>
                 {comments.map((comment, index) => (

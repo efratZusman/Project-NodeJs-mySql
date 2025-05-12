@@ -62,6 +62,7 @@ exports.updateUserByUsername = async function updateUserByUsername(username, use
         WHERE UserID = (SELECT UserID FROM Users WHERE Username = ?)
     `;
     try {
+        
         await db.beginTransaction();
 
         await db.execute(userQuery, [email, username]);

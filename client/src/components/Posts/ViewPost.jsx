@@ -8,7 +8,7 @@ function ViewPost(props) {
     const [editPostBody, setEditPostBody] = useState('');
     const [isEditing, setIsEditing] = useState(false);
     const { userData } = useUserContext();
-    const userId = userData.id;
+    const userName = userData.username;
     const apiService = new ApiService();
 
     const handleUpdatePost = async (id, newBody) => {

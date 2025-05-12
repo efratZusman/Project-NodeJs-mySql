@@ -13,19 +13,19 @@ import {useUserContext} from './UserContext';
 
 function MyApp() {
   const {userData} = useUserContext();
-  const{id}=userData;
-  if (id!='') {
+  const{username}=userData.username;
+  if (userData.UserId!='') {
     return ( 
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Home />} />
           <Route path="/register" element={<Home />} />
-          <Route path={`/user/${id}/home`} element={<Home/>} />
-          <Route path={`/user/${id}/todos`} element={<Todos />} />
-          <Route path={`/user/${id}/posts`} element={<Posts />} />
-          <Route path={`/user/${id}/albums`} element={<Albums />} />
-          <Route path={`/user/${id}/post/:postId/comments`} element={<ViewComments />} />
-          <Route path={`/user/${id}/album/:albumId/photos`} element={<ViewPhotos/>} />
+          <Route path={`/user/${username}/home`} element={<Home/>} />
+          <Route path={`/user/${username}/todos`} element={<Todos />} />
+          <Route path={`/user/${username}/posts`} element={<Posts />} />
+          <Route path={`/user/${username}/albums`} element={<Albums />} />
+          <Route path={`/user/${username}/post/:postId/comments`} element={<ViewComments />} />
+          <Route path={`/user/${username}/album/:albumId/photos`} element={<ViewPhotos/>} />
           <Route path="*" element={<PageNotFound />} />
         </Routes>  
     );
